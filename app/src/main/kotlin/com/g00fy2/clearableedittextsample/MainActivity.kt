@@ -11,6 +11,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        //clearableedittext.clearIconDrawable = null
         clearableedittext.onClearIconTouchListener = View.OnTouchListener { _, _ ->
             Log.d(localClassName, "Clear pressed")
             true

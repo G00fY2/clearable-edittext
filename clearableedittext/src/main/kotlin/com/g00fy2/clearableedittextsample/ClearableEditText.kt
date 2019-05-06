@@ -10,13 +10,13 @@ import androidx.core.content.res.ResourcesCompat
 
 class ClearableEditText : AppCompatEditText {
 
-    var clearDrawable: Drawable? = null
+    var clearIconDrawable: Drawable? = null
     var onClearIconTouchListener: OnTouchListener? = null
 
     constructor(context: Context) : this(context, null)
     constructor(context: Context, attrs: AttributeSet?) : this(context, attrs, R.attr.editTextStyle)
     constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(context, attrs, defStyleAttr) {
-        clearDrawable = ResourcesCompat.getDrawable(resources, R.drawable.abc_ic_clear_material, null)?.apply {
+        clearIconDrawable = ResourcesCompat.getDrawable(resources, R.drawable.abc_ic_clear_material, null)?.apply {
             setBounds(0, 0, this.intrinsicWidth, this.intrinsicHeight)
         }
         toggleClearDrawable(text)
@@ -39,6 +39,6 @@ class ClearableEditText : AppCompatEditText {
     }
 
     private fun toggleClearDrawable(text: CharSequence?) {
-        setCompoundDrawables(null, null, if (text.isNullOrEmpty()) null else clearDrawable, null)
+        setCompoundDrawables(null, null, if (text.isNullOrEmpty()) null else clearIconDrawable, null)
     }
 }

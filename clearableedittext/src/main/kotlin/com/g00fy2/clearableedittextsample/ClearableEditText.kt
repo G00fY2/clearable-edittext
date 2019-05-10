@@ -15,6 +15,7 @@ class ClearableEditText : AppCompatEditText {
 
     private var iconVisible = false
     var clearIconDrawable: Drawable? = null
+    var hideClearIconOnFocusLoss = true
     var onClearIconTouchListener: OnTouchListener? = null
 
     constructor(context: Context) : this(context, null)
@@ -23,6 +24,7 @@ class ClearableEditText : AppCompatEditText {
         clearIconDrawable = ResourcesCompat.getDrawable(resources, R.drawable.ic_clear, null)?.apply {
             setBounds(0, 0, this.intrinsicWidth, this.intrinsicHeight)
         }
+        if (!hideClearIconOnFocusLoss) toggleClearDrawable()
     }
 
     override fun onTextChanged(text: CharSequence?, start: Int, lengthBefore: Int, lengthAfter: Int) {
@@ -47,13 +49,22 @@ class ClearableEditText : AppCompatEditText {
     }
 
     private fun toggleClearDrawable() {
-        val show = hasFocus() && !text.isNullOrEmpty() && !iconVisible
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+        val show = (hasFocus() || !hideClearIconOnFocusLoss) && !text.isNullOrEmpty()
+        if (show != iconVisible && Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
             setCompoundDrawablesRelative(null, null, if (show) clearIconDrawable else null, null)
-        } else {
+            iconVisible = show && checkIfIconVisible()
+        } else if (show != iconVisible) {
             setCompoundDrawables(null, null, if (show) clearIconDrawable else null, null)
+            iconVisible = show && checkIfIconVisible()
         }
-        iconVisible = show
+    }
+
+    private fun checkIfIconVisible(): Boolean {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1 && layoutDirection == View.LAYOUT_DIRECTION_RTL) {
+            return width - totalPaddingLeft > 0
+        } else {
+            return width - totalPaddingRight > 0
+        }
     }
 
     private fun eventInsideClearIcon(x: Float): Boolean {
